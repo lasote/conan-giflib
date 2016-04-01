@@ -6,13 +6,13 @@ from conans import CMake, ConfigureEnvironment
 
 class ZlibNgConan(ConanFile):
     name = "giflib"
-    version = "5.1.2"
+    version = "5.1.3"
     ZIP_FOLDER_NAME = "giflib-%s" % version 
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
-    url="http://github.com/lasote/conan-zlib-ng"
+    url="http://github.com/lasote/conan-giflib"
     license="https://sourceforge.net/p/giflib/code/ci/master/tree/COPYING"
     exports = ["FindGIF.cmake", "CMakeLists.txt", "getopt.c", "getopt.h", "stdbool.h", "unistd.h.in", "giflib-%s-windows.zip" % version]
     # The exported files I took them from https://github.com/bjornblissing/osg-3rdparty-cmake/tree/master/giflib

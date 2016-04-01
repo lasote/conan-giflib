@@ -16,7 +16,7 @@ class DefaultNameConan(ConanFile):
     version = "0.1"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    requires = "giflib/5.1.2@%s/%s" % (username, channel)
+    requires = "giflib/5.1.3@%s/%s" % (username, channel)
     export = "cat-small.static.gif"
 
     def build(self):
