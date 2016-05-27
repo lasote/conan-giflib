@@ -26,10 +26,10 @@ IF(MSVC)
 	# getopt from: http://gist.github.com/ashelly/7776712
 	# unistd.h from: http://stackoverflow.com/questions/341817/is-there-a-replacement-for-unistd-h-for-windows-visual-c
 	# stdbool.h is just a simple redefinition of bool as int
-	SET(GIFLIB_PUBLIC_HEADERS
-		${GIFLIB_PUBLIC_HEADERS}
-		stdbool.h
-	)
+	#SET(GIFLIB_PUBLIC_HEADERS
+	#	${GIFLIB_PUBLIC_HEADERS}
+	#	stdbool.h
+	#)
 
 	SET(GIFLIB_PRIVATE_HEADERS
 		${GIFLIB_PRIVATE_HEADERS}
