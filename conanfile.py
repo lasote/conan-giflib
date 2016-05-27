@@ -14,7 +14,7 @@ class ZlibNgConan(ConanFile):
     default_options = "shared=False", "fPIC=True"
     url="http://github.com/lasote/conan-giflib"
     license="https://sourceforge.net/p/giflib/code/ci/master/tree/COPYING"
-    exports = ["FindGIF.cmake", "CMakeLists.txt", "getopt.c", "getopt.h", "stdbool.h", "unistd.h.in"]
+    exports = ["FindGIF.cmake", "CMakeLists.txt", "getopt.c", "getopt.h", "unistd.h.in"]
     # The exported files I took them from https://github.com/bjornblissing/osg-3rdparty-cmake/tree/master/giflib
     
     def config(self):
@@ -43,7 +43,7 @@ class ZlibNgConan(ConanFile):
         if self.settings.os != "Windows":
             self.run("chmod +x ./%s/autogen.sh" % self.ZIP_FOLDER_NAME)
         else:
-            for filename in ["CMakeLists.txt", "getopt.c", "getopt.h", "stdbool.h", "unistd.h.in"]:
+            for filename in ["CMakeLists.txt", "getopt.c", "getopt.h", "unistd.h.in"]:
                 shutil.copy(filename, os.path.join(self.ZIP_FOLDER_NAME, filename))
             
 
