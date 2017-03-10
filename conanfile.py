@@ -1,7 +1,7 @@
 from conans import ConanFile
 import os, shutil
-from conans.tools import download, unzip, replace_in_file
-from conans import CMake, ConfigureEnvironment
+from conans.tools import download, unzip, replace_in_file, environment_append, chdir
+from conans import CMake, AutoToolsBuildEnvironment
 
 
 class ZlibNgConan(ConanFile):
@@ -31,11 +31,7 @@ class ZlibNgConan(ConanFile):
                 pass
             # self.ZIP_FOLDER_NAME = "giflib-%s-windows" % self.version
 
-
     def source(self):
-#         if self.settings.os == "Windows":
-#             zip_name = "giflib-%s-windows.zip" % self.version
-#         else: 
         zip_name = "%s.tar.gz" % self.ZIP_FOLDER_NAME
         download("http://downloads.sourceforge.net/project/giflib/%s" % zip_name, zip_name)
         unzip(zip_name)
@@ -45,26 +41,22 @@ class ZlibNgConan(ConanFile):
         else:
             for filename in ["CMakeLists.txt", "getopt.c", "getopt.h", "unistd.h.in"]:
                 shutil.copy(filename, os.path.join(self.ZIP_FOLDER_NAME, filename))
-            
 
     def build(self):
         if self.settings.os == "Linux" or self.settings.os == "Macos":
-            env = ConfigureEnvironment(self.deps_cpp_info, self.settings)
-            if self.options.fPIC:
-                env_line = env.command_line.replace('CFLAGS="', 'CFLAGS="-fPIC ')
-            else:
-                env_line = env.command_line
-            
-            self.run("cd %s && %s ./autogen.sh" % (self.ZIP_FOLDER_NAME, env_line))
-            self.run("chmod +x ./%s/configure" % self.ZIP_FOLDER_NAME)
-            if self.settings.os == "Macos":
-                old_str = '-install_name \$rpath/\$soname'
-                new_str = '-install_name \$soname'
-                replace_in_file("./%s/configure" % self.ZIP_FOLDER_NAME, old_str, new_str)
+            env = AutoToolsBuildEnvironment(self)
+            env.fpic = self.options.fPIC
+            with environment_append(env.vars):
+                with chdir(self.ZIP_FOLDER_NAME):
+                    self.run("./autogen.sh")
+                    self.run("chmod +x configure")
+                    if self.settings.os == "Macos":
+                        old_str = '-install_name \$rpath/\$soname'
+                        new_str = '-install_name \$soname'
+                        replace_in_file("./configure", old_str, new_str)
 
-            
-            self.run("cd %s && %s ./configure" % (self.ZIP_FOLDER_NAME, env_line))
-            self.run("cd %s && %s make" % (self.ZIP_FOLDER_NAME, env_line))
+                    self.run("./configure")
+                    self.run("make")
         else:
             cmake = CMake(self.settings)
             self.run("cd %s && mkdir _build" % self.ZIP_FOLDER_NAME)
@@ -77,10 +69,13 @@ class ZlibNgConan(ConanFile):
     def package(self):
         # Copy FindGIF.cmake to package
         self.copy("FindGIF.cmake", ".", ".")
+
+        # Copy pc file
+        self.copy("*.pc", dst="", keep_path=False)
         
         # Copying zlib.h, zutil.h, zconf.h
-        self.copy("*.h", "include", "%s" % (self.ZIP_FOLDER_NAME), keep_path=False)
-        self.copy("*.h", "include", "%s" % ("_build"), keep_path=False)
+        self.copy("*.h", "include", "%s" % self.ZIP_FOLDER_NAME, keep_path=False)
+        self.copy("*.h", "include", "%s" % "_build", keep_path=False)
 
         if not self.settings.os == "Windows" and self.options.shared:
             if self.settings.os == "Macos":

@@ -7,9 +7,10 @@ environment:
     CONAN_UPLOAD: 1
     CONAN_REFERENCE: "giflib/5.1.3"
     CONAN_USERNAME: "lasote"
-    CONAN_CHANNEL: "ci"
+    CONAN_CHANNEL: "testing"
     CONAN_TOTAL_PAGES: 1
     CONAN_VISUAL_VERSIONS: 14
+    CONAN_STABLE_BRANCH_PATTERN: "release/*"
     
     matrix:
         - CONAN_CURRENT_PAGE: 1
